@@ -25,70 +25,119 @@ class Vector:
   """Represent a vector in a multidimensional space."""
 
   def __init__(self, d):
-    if isinstance(d, int):
-      self._coords = [0] * d
-    else:                                  
-      try:                                     # we test if param is iterable
-        self._coords = [val for val in d]
-      except TypeError:
-        raise TypeError('invalid parameter type')
+        if isinstance(d, int):
+            self._coords = [0] * d
+        else:
+            try:
+                self._coords = [val for val in d]
+            except TypeError:
+                raise TypeError('invalid parameter type')
 
   def __len__(self):
-    """Return the dimension of the vector."""
-    return len(self._coords)
+      """Return the dimension of the vector."""
+      return len(self._coords)
 
   def __getitem__(self, j):
-    """Return jth coordinate of vector."""
-    return self._coords[j]
+      """Return jth coordinate of vector."""
+      return self._coords[j]
 
   def __setitem__(self, j, val):
-    """Set jth coordinate of vector to given value."""
-    self._coords[j] = val
+      """Set jth coordinate of vector to given value."""
+      self._coords[j] = val
 
   def __add__(self, other):
-    """Return sum of two vectors."""
-    if len(self) != len(other):          # relies on __len__ method
-      raise ValueError('dimensions must agree')
-    result = Vector(len(self))           # start with vector of zeros
-    for j in range(len(self)):
-      result[j] = self[j] + other[j]
-    return result
+      """Return sum of two vectors."""
+      if len(self) != len(other):
+          raise ValueError('dimensions must agree')
+      result = Vector(len(self))
+      for j in range(len(self)):
+          result[j] = self[j] + other[j]
+      return result
+
+  def __sub__(self, other):
+      """Return difference of two vectors."""
+      if len(self) != len(other):
+          raise ValueError('dimensions must agree')
+      result = Vector(len(self))
+      for j in range(len(self)):
+          result[j] = self[j] - other[j]
+      return result
+
+  def __neg__(self):
+      """Return negation of the vector."""
+      result = Vector(len(self))
+      for j in range(len(self)):
+          result[j] = -self[j]
+      return result
+
+  def __mul__(self, other):
+      """Return dot product of two vectors or scalar multiplication."""
+      if isinstance(other, Vector):
+          if len(self) != len(other):
+              raise ValueError('dimensions must agree')
+          return sum(self[j] * other[j] for j in range(len(self)))
+      elif isinstance(other, (int, float)):
+          result = Vector(len(self))
+          for j in range(len(self)):
+              result[j] = self[j] * other
+          return result
+      else:
+          raise TypeError('unsupported operand type for *')
+
+  def __rmul__(self, other):
+      """Return scalar multiplication with reversed operands."""
+      return self * other
+
+  def cross(self, other):
+      """Return cross product of two vectors."""
+      if len(self) != len(other) or len(self) != 3:
+          raise ValueError('vectors must be of length 3 for cross product')
+      i = self[1] * other[2] - self[2] * other[1]
+      j = self[2] * other[0] - self[0] * other[2]
+      k = self[0] * other[1] - self[1] * other[0]
+      return Vector([i, j, k])
 
   def __eq__(self, other):
-    """Return True if vector has same coordinates as other."""
-    return self._coords == other._coords
+      """Return True if vector has the same coordinates as other."""
+      return self._coords == other._coords
 
   def __ne__(self, other):
-    """Return True if vector differs from other."""
-    return not self == other             # rely on existing __eq__ definition
+      """Return True if vector differs from other."""
+      return not self == other
 
   def __str__(self):
-    """Produce string representation of vector."""
-    return '<' + str(self._coords)[1:-1] + '>'  # adapt list representation
+      """Produce string representation of vector."""
+      return '<' + str(self._coords)[1:-1] + '>'
 
   def __lt__(self, other):
-    """Compare vectors based on lexicographical order."""
-    if len(self) != len(other):
-      raise ValueError('dimensions must agree')
-    return self._coords < other._coords
+      """Compare vectors based on lexicographical order."""
+      if len(self) != len(other):
+          raise ValueError('dimensions must agree')
+      return self._coords < other._coords
 
   def __le__(self, other):
-    """Compare vectors based on lexicographical order."""
-    if len(self) != len(other):
-      raise ValueError('dimensions must agree')
-    return self._coords <= other._coords
+      """Compare vectors based on lexicographical order."""
+      if len(self) != len(other):
+          raise ValueError('dimensions must agree')
+      return self._coords <= other._coords
 
-def cross(u,v):
-  return u.cross(v)
+def cross(self, other):
+        """Return cross product of two vectors."""
+        if len(self) != len(other) or len(self) != 3:
+            raise ValueError('vectors must be of length 3 for cross product')
+        i = self[1] * other[2] - self[2] * other[1]
+        j = self[2] * other[0] - self[0] * other[2]
+        k = self[0] * other[1] - self[1] * other[0]
+        return Vector([i, j, k])
   
 if __name__ == '__main__':
-  # the following demonstrates usage of a few methods
-  v = Vector(5)              # construct five-dimensional <0, 0, 0, 0, 0>
-  v[1] = 23                  # <0, 23, 0, 0, 0> (based on use of __setitem__)
-  v[-1] = 45                 # <0, 23, 0, 0, 45> (also via __setitem__)
-  print(v[4])                # print 45 (via __getitem__)
-  u = v + v                  # <0, 46, 0, 0, 90> (via __add__)
-  print(u)                   # print <0, 46, 0, 0, 90>
-  total = 0
-  for entry in v:            # implicit iteration via __len__ and __getitem__
-    total += entry
+    # The following demonstrates usage of a few methods
+    v = Vector(5)
+    v[1] = 23
+    v[-1] = 45
+    print(v[4])
+    u = v + v
+    print(u)
+    total = 0
+    for entry in v:
+        total += entry

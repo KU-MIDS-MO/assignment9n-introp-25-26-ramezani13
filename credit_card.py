@@ -63,6 +63,10 @@ class CreditCard:
 
     Return True if charge was processed; False if charge was denied.
     """
+    try:
+        price = float(price)
+    except TypeError as e:
+        return f"TypeError: {e}"
     if price + self._balance > self._limit:  # if charge would exceed limit,
       return False                           # cannot accept charge
     else:
@@ -70,6 +74,10 @@ class CreditCard:
       return True
 
   def make_payment(self, amount):
+    try:
+        amount = float(amount)
+    except TypeError as e:
+        return f"TypeError: {e}"
     """Process customer payment that reduces balance."""
     self._balance -= amount
 
@@ -97,3 +105,4 @@ if __name__ == '__main__':
       wallet[c].make_payment(100)
       print('New balance =', wallet[c].get_balance())
     print()
+
