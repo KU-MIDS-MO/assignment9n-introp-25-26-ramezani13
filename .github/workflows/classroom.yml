@@ -1,0 +1,52 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: test_credit_card.py
+      id: test_credit_card-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 10
+        max-score: 5
+        setup-command: pip install pytest
+    - name: test_cross_product.py
+      id: test_cross_product-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 10
+        max-score: 5
+        setup-command: pip install pytest
+    - name: test_difference.py
+      id: test_difference-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 10
+        max-score: 5
+        setup-command: pip install pytest
+    - name: test_multiplication.py
+      id: test_multiplication-py
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 10
+        max-score: 5
+        setup-command: pip install pytest
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST_CREDIT_CARD-PY_RESULTS: "${{steps.test_credit_card-py.outputs.result}}"
+        TEST_CROSS_PRODUCT-PY_RESULTS: "${{steps.test_cross_product-py.outputs.result}}"
+        TEST_DIFFERENCE-PY_RESULTS: "${{steps.test_difference-py.outputs.result}}"
+        TEST_MULTIPLICATION-PY_RESULTS: "${{steps.test_multiplication-py.outputs.result}}"
+      with:
+        runners: test_credit_card-py,test_cross_product-py,test_difference-py,test_multiplication-py
